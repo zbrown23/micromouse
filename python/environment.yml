@@ -1,0 +1,8 @@
+name: micromouse-env
+dependencies:
+  - python=3.11
+  - numpy
+  - matplotlib
+  - pyzmq
+  - cbor2
+  - coppeliasim-zmqremoteapi-client
