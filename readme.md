@@ -2,7 +2,7 @@
 
 ## Team Members and Roles
 Ari Avalos -  
-Sohpie Ave'lallemant -  
+Sophie Ave'lallemant -  
 Zach Brown -  
 Adam Thompson -  
 
