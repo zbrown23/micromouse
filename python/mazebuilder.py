@@ -2,12 +2,9 @@ import numpy as np
 import coppeliasim_zmqremoteapi_client as zmq
 
 
-# generate a micromouse map in coppeliasim.
-# Why spend 2 hours doing something manually when you can spend 10 automating it? :)
-# the maze is made up of 18cm x 18cm unit squares arranged to form a 16 x 16 unit grid.
-# the walls of these unit cells are 5cm high and 1.2 cm thick.
+# take a generated maze and "build" it in CoppeliaSim
 
-class Maze:
+class MazeBuilder:
     def __init__(self, client: zmq.RemoteAPIClient = None):
         self.client = client
 
@@ -17,6 +14,7 @@ class Maze:
     def generate_walls(self):
         if self.client is None:
             raise Exception(f"A client is required to generate lattice points.")
+        # TODO: clean this up, explain the magic numbers, check to see if the walls exist before making new ones.
         sim = self.client.getObject('sim')
         left_wall = sim.createPrimitiveShape(sim.primitiveshape_cuboid, [0.012, 2.892, 0.05])
         wall_pose = sim.getObjectPose(left_wall)
@@ -45,5 +43,5 @@ class Maze:
 
 if __name__ == "__main__":
     client = zmq.RemoteAPIClient()
-    maze = Maze(client)
+    maze = MazeBuilder(client)
     maze.generate_walls()

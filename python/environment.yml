@@ -5,4 +5,5 @@ dependencies:
   - matplotlib
   - pyzmq
   - cbor2
+  - scipy
   - coppeliasim-zmqremoteapi-client
