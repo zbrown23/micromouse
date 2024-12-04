@@ -49,7 +49,10 @@ def floodFill(img, x, y, newClr, goal=None):
             # Adjust the path for Cartesian coordinates (bottom-left origin)
             path_cartesian = [(px, len(img) - py - 1) for px, py in path]
             
-            print("Path from start to goal:", path_cartesian)
+            # Filter path to include only coordinates where both x and y are odd
+            path_cartesian_odd = [(px, py) for px, py in path_cartesian if px % 2 != 0 and py % 2 != 0]
+            
+            print("Path from start to goal (only odd coordinates):", path_cartesian_odd)
             break  # Stop flood fill if the goal is reached
         
         # Explore all 4 neighboring pixels (up, right, down, left)
