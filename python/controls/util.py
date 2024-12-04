@@ -17,6 +17,7 @@ def make_cost_matrix(elems: np.ndarray) -> np.ndarray:
     :param elems: Input vector with maximum deviation values
     :return: The state excursion (Q) or control effort cost (R) matrix
     """
+    elems = np.array(elems, dtype=float)
     # Calculate the inverse square of each element, setting inf elements to 0
     diagonal_values = np.where(elems == float("inf"), 0.0, 1.0 / elems ** 2)
 

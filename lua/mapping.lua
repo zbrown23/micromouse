@@ -5,7 +5,7 @@ function sysCall_init()
     grid = Matrix(16,16,{})
     hor_walls = Matrix(15,15) -1
     vert_walls = Matrix(15,15) -1
-    
+
     grid_size = 10 --inches
     pos_uncertainty = 0.15 * grid_size -- within 0.15 tiles +- of center
     h_uncertainty = 10/180 *math.pi --within 10 degrees +- of target
@@ -24,15 +24,15 @@ function sysCall_sensing()
     -- Get the current position, orientation, and wall readings
     curr_location = get_position()
     curr_heading = get_orientation()
-    
+
     -- asign current position to grid, or if uncertain take no action
     x = snapToGrid(curr_location[1])
     y = snapToGrid(curr_location[2])
-    
+
     -- assign current orientation to one of 4 (if uncertain take no action):
     -- NORTH, EAST, SOUTH, WEST
     orientation = snapOrientation(curr_heading)
-    
+
     -- if all values are griddized, collect data about this square
     if (x != -1 && y != -1 && orientation != -1)
         -- Get values from LiDAR to determine if there is a wall or not
@@ -59,8 +59,6 @@ function sysCall_sensing()
             vert_walls[x,y] = left
         end
     end
-    
-    
     -- Start of the flood fill algorithm
     -- Goal: take every path
     -- general premise: survey options. When a decision must be made (i.e. multiple
@@ -68,7 +66,6 @@ function sysCall_sensing()
     -- will do this with stacking. Each cell will enter the stack, and once all
     -- options are depleted it will enter the closed list and no longer generate
     -- options when it is reached.
-    
 end
 
 function sysCall_cleanup()

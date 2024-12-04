@@ -1,8 +1,8 @@
 import numpy as np
 import scipy as sp
 
-from util import make_cost_matrix, is_stabilizable
-from discretize import discretize_ab
+from .util import make_cost_matrix, is_stabilizable
+from .discretize import discretize_ab
 
 
 class LQR:

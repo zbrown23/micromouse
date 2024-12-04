@@ -5,6 +5,7 @@ class Pose2d:
     """
     A class encapsulating a 2 dimensional robot pose.
     """
+
     def __init__(self, x: float = None, y: float = None, theta: float = None):
         if x is not None:
             self.x = x
@@ -40,3 +41,18 @@ class Pose2d:
         rel_theta = self.theta - other.theta
 
         return Pose2d(rel_x, rel_y, rel_theta)
+
+    def magnitude(self) -> float:
+        return np.sqrt(self.x * self.x + self.y * self.y)
+
+    def __str__(self):
+        return f"Pose2d({self.x}, {self.y}, {self.theta})"
+
+    @classmethod
+    def from_sim(cls, pose):
+        x_pos = pose[0]
+        y_pos = pose[1]
+        quaternion = pose[3:]
+        x, y, z, w = quaternion
+        yaw = np.atan2(2.0 * (w * z + x * y), 1.0 - 2.0 * (y * y + z * z))
+        return cls(x=x_pos, y=y_pos, theta=yaw)
