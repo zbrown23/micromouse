@@ -46,7 +46,7 @@ class Pose2d:
         return np.sqrt(self.x * self.x + self.y * self.y)
 
     def __str__(self):
-        return f"Pose2d({self.x}, {self.y}, {self.theta})"
+        return f"({self.x}, {self.y}, {self.theta})"
 
     @classmethod
     def from_sim(cls, pose):

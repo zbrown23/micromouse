@@ -3,11 +3,32 @@ import numpy as np
 from controls import Pose2d
 
 
+class Gyro:
+    def __init__(self, sim):
+        """
+        Simulates a gyro by reading the angular velocity of the robot from the simulation.
+        :param sim: the simulation handle
+        """
+        self.sim = sim
+        if sim is None:
+            raise Exception("Need a sim handle!")
+        self.robot = sim.getObject('/micromouse')
+
+    def read(self):
+        _, angular_vel = self.sim.getVelocity(self.robot)
+        angular_vel = np.array(angular_vel)
+        angular_vel = np.linalg.norm(angular_vel)
+        return angular_vel
+
+
 class Odometry:
-    def __init__(self, wheel_dia=0.032, track_width=0.05):
+    def __init__(self, initial_pose: Pose2d = None, wheel_dia=0.032, track_width=0.05):
         self.wheel_radius = wheel_dia / 2
         self.track_width = track_width
-        self.pose = Pose2d()
+        if initial_pose is None:
+            self.pose = Pose2d()
+        else:
+            self.pose = initial_pose
 
     def update(self, omega_l, omega_r, dt) -> Pose2d:
         """
@@ -18,17 +39,17 @@ class Odometry:
         :return: the new pose.
         """
         v_l = omega_l * self.wheel_radius
-        v_r = omega_r * self.wheel_radius
+        v_r = -omega_r * self.wheel_radius
         v = (v_l + v_r) / 2
         w = (v_r - v_l) / self.track_width
 
-        dx = v * math.cos(self.pose.theta) * dt
-        dy = v * math.sin(self.pose.theta) * dt
-        dtheta = w * dt
+        dy = v * math.cos(self.pose.theta) * dt
+        dx = v * math.sin(self.pose.theta) * dt
+        d_theta = w * dt
 
         self.pose.x += dx
         self.pose.y += dy
-        self.pose.theta = wrap_angle(self.pose.theta + dtheta)
+        self.pose.theta = wrap_angle(self.pose.theta + d_theta)
 
         return self.pose
 
