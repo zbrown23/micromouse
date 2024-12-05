@@ -82,7 +82,7 @@ img = [
 ]
 
 goal_pixel = (15, 15)  # Define the goal pixel in (x, y) format
-start_pixel = (1, 1)  # Define the starting pixel in (x, y) format
+start_pixel = (1, 31)  # Define the starting pixel in (x, y) format
 
 path = floodFill(img, start_pixel[0], start_pixel[1], 3, goal_pixel)  # Start the flood fill from (0, 6)
 
