@@ -35,6 +35,7 @@ class Gyro:
         _, angular_vel = self.sim.getVelocity(self.robot)
         angular_vel = np.array(angular_vel)
         angular_vel = np.linalg.norm(angular_vel)
+        angular_vel += np.random.normal(0, 0.025)  # add noise similar to the noise in a MEMS gyro
         return angular_vel
 
 

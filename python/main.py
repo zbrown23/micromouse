@@ -25,9 +25,6 @@ class Robot:
     def get_wheel_speeds(self):
         return self.sim.getJointVelocity(self.l_wheel), self.sim.getJointVelocity(self.r_wheel)
 
-    def driveToCell(self, direction, vel):
-        pass
-
 
 def main():
     client = zmq.RemoteAPIClient()
@@ -36,7 +33,7 @@ def main():
     initial_position = sim.getObjectPosition(sim.getObject('/micromouse/center_pt'))
     l_wheel_joint = sim.getObject('/micromouse/l_wheel_joint')
     r_wheel_joint = sim.getObject('/micromouse/r_wheel_joint')
-    controller = OffCenterController(sim, 0.085, 0.032, 0.05, 0.01)
+    controller = OffCenterController(sim, 0.1, 0.032, 0.05, 0.0075)
     start_time = sim.getSimulationTime()
     last_time = start_time
     while last_time - start_time < 3:
