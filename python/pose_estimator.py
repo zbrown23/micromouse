@@ -3,6 +3,23 @@ import numpy as np
 from controls import Pose2d
 
 
+class PoseEstimator:
+    def __init__(self, sim, initial_pose: Pose2d = None, alpha: float = 0.98, beta: float = 0.005):
+        self.sim = sim
+        self.gyro = Gyro(sim)
+        self.odometry = Odometry(initial_pose)
+        self.filter = AlphaBetaFilter2D(alpha, beta)
+        self.l_wheel = self.sim.getObject('/micromouse/l_wheel_joint')
+        self.r_wheel = self.sim.getObject('/micromouse/r_wheel_joint')
+
+    def update(self, dt):
+        omega_l = self.sim.getJointVelocity(self.l_wheel)
+        omega_r = self.sim.getJointVelocity(self.r_wheel)
+        odom_pose = self.odometry.update(omega_l, omega_r, dt)
+        gyro_rate = self.gyro.read()
+        return self.filter.update(odom_pose, gyro_rate, dt)
+
+
 class Gyro:
     def __init__(self, sim):
         """
@@ -14,7 +31,7 @@ class Gyro:
             raise Exception("Need a sim handle!")
         self.robot = sim.getObject('/micromouse')
 
-    def read(self):
+    def read(self) -> float:
         _, angular_vel = self.sim.getVelocity(self.robot)
         angular_vel = np.array(angular_vel)
         angular_vel = np.linalg.norm(angular_vel)
@@ -60,6 +77,41 @@ class Odometry:
         :return:
         """
         self.pose = pose
+
+
+class AlphaBetaFilter2D:
+    def __init__(self, alpha: float, beta: float):
+        self.alpha = alpha  # Position weight
+        self.beta = beta  # Velocity weight
+
+        # Initial pose and velocities
+        self.pose = Pose2d()  # (x, y, theta)
+        self.vx = 0.0  # Velocity in x
+        self.vy = 0.0  # Velocity in y
+        self.omega = 0.0  # Angular velocity
+
+    def update(self, odom_pose: Pose2d, gyro_rate: float, dt: float) -> Pose2d:
+        # Integrate gyro rate to update orientation
+        self.pose.theta += gyro_rate * dt
+
+        # Predict step
+        self.pose.x += self.vx * dt
+        self.pose.y += self.vy * dt
+
+        # Correct step using odometry
+        self.pose.x += self.alpha * (odom_pose.x - self.pose.x)
+        self.pose.y += self.alpha * (odom_pose.y - self.pose.y)
+        self.pose.theta += self.alpha * (odom_pose.theta - self.pose.theta)
+
+        # Update velocities
+        self.vx += self.beta * ((odom_pose.x - self.pose.x) / (dt + 0.00001))
+        self.vy += self.beta * ((odom_pose.y - self.pose.y) / (dt + 0.00001))
+        self.omega = gyro_rate  # Use the current gyro rate
+
+        # Normalize theta to [-pi, pi]
+        self.pose.theta = wrap_angle(self.pose.theta)
+
+        return self.pose
 
 
 def wrap_angle(angle):
