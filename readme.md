@@ -20,7 +20,10 @@ We designed our maze according to the current competition rules, featuring a 16x
 ![image](https://github.com/user-attachments/assets/cfde2533-9c36-4ca0-8f5c-8aaf8c60aee9)
 
 ## Robot
-The robot used for the simulation follows the differential drive design, which is commonly used in competition for its simplicity and effective movement. It is equipped with proximity sensors on the front, left, and right to detect walls, helping it avoid obstacles and stay within the maze pathways. Odometry is utilized to estimate the robot’s position within the maze, enabling it to track its movements and make accurate decisions about where to go next.
+The robot used for the simulation follows the differential drive design, which is commonly used in competition for its simplicity and effective movement. It is equipped with proximity sensors on the front, left, and right to detect walls, helping it avoid obstacles and stay within the maze pathways. 
+![image](https://github.com/user-attachments/assets/de1474dc-6f75-4c5b-8f5b-74d13777b664)
+
+Odometry is utilized to estimate the robot’s position within the maze, enabling it to track its movements and make accurate decisions about where to go next.
 
 ## Robot Control & Odometry
 
