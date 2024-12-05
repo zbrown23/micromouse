@@ -6,6 +6,10 @@ Created on Tue Dec  3 14:08:54 2024
 """
 import heapq
 
+from coppeliasim_zmqremoteapi_client import RemoteAPIClient
+client = RemoteAPIClient() 
+sim = client.require('sim')
+
 # Reconstructs the path from the 'cameFrom' map
 def reconstruct_path(cameFrom, current):
     total_path = [current]
@@ -93,15 +97,13 @@ img = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] #10
 ]
 
-start_pixel = (1, 9)  # Starting point (x, y) in (column, row)
-goal_pixel = (17, 5)  # Goal point (x, y) in (column, row)
+start_pixel = (1, 31)  # Starting point (x, y) in (column, row)
+goal_pixel = (15, 15)  # Goal point (x, y) in (column, row)
 
 # Run A* to find the path
 path = A_star(start_pixel, goal_pixel, heuristic, distance, img)
 
-# Output the path
-if path:
-    print("Path from start to goal (Cartesian coordinates with bottom-left origin, filtering even cells):")
-    print(path)
-else:
-    print("No path found.")
+
+def sysCall_sensing():
+    message = {'id': 'pathPlan','data': path}
+    sim.broadcastMsg(message)
