@@ -1,6 +1,6 @@
 import numpy as np
 import coppeliasim_zmqremoteapi_client as zmq
-import Pose2d
+import pose2d
 from lqr import LQR
 
 

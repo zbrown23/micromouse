@@ -5,12 +5,13 @@ from controls import Pose2d
 
 cell_spacing = 0.18
 
+
 class Robot:
     def __init__(self, sim, wheel_dia=0.032, track_width=0.05):
         self.track_width = track_width
         self.wheel_dia = wheel_dia
         if sim is None:
-            raise Exception("Need a ZMQ client to drive!")
+            raise Exception("need a sim handle!")
         self.sim = sim
         self.l_wheel = self.sim.getObject('/micromouse/l_wheel_joint')
         self.r_wheel = self.sim.getObject('/micromouse/r_wheel_joint')
@@ -25,12 +26,32 @@ class Robot:
         pass
 
 
+class Gyro:
+    def __init__(self, sim, noise):
+        """
+        :param sim:
+        :param noise:
+        """
+        self.sim = sim
+        self.noise = noise
+        if sim is None:
+            raise Exception("Need a sim handle!")
+        self.robot_point = sim.getObject('/micromouse')
+
+    def read(self) -> float:
+        _, angular_vel = self.sim.getVelocity(self.robot_point)
+        print(angular_vel)
+
+
 def main():
     client = zmq.RemoteAPIClient()
     sim = client.getObject('sim')
     robot = Robot(sim)
+    gyro = Gyro(sim, noise=0.001)
     robot.drive(0, np.pi / 2)
-    time.sleep(1)
+    start_time = time.time()
+    while time.time() - start_time < 3:
+        print(gyro.read())
     robot.drive(0, 0)
     pass
 

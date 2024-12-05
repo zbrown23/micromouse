@@ -1,5 +1,4 @@
 import math
-
 import numpy as np
 from controls import Pose2d
 
@@ -29,11 +28,9 @@ class Odometry:
 
         self.pose.x += dx
         self.pose.y += dy
-        self.pose.theta = self.wrap_angle(self.pose.theta + dtheta)
+        self.pose.theta = wrap_angle(self.pose.theta + dtheta)
 
         return self.pose
-
-
 
     def reset(self, pose: Pose2d):
         """
@@ -44,14 +41,14 @@ class Odometry:
         self.pose = pose
 
 
-    def wrap_angle(angle):
-        """
-        Wraps an angle in radians to the range [-π, π].
-        :param angle: The angle in radians.
-        :return: The wrapped angle.
-        """
-        while angle > math.pi:
-            angle -= 2 * math.pi
-        while angle < -math.pi:
-            angle += 2 * math.pi
-        return angle
+def wrap_angle(angle):
+    """
+    Wraps an angle in radians to the range [-π, π].
+    :param angle: The angle in radians.
+    :return: The wrapped angle.
+    """
+    while angle > math.pi:
+        angle -= 2 * math.pi
+    while angle < -math.pi:
+        angle += 2 * math.pi
+    return angle
