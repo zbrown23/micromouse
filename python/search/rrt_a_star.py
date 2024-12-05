@@ -8,6 +8,7 @@ RRT for exploring, A_star for path planing
 import heapq
 import random
 
+
 # Reconstructs the path from the 'cameFrom' map
 def reconstruct_path(cameFrom, current):
     total_path = [current]
@@ -15,6 +16,7 @@ def reconstruct_path(cameFrom, current):
         current = cameFrom[current]
         total_path.insert(0, current)  # Prepend to reverse the path order
     return total_path
+
 
 # A* algorithm
 def A_star(start, goal, h, d, grid):
@@ -44,38 +46,42 @@ def A_star(start, goal, h, d, grid):
 
     return None
 
+
 # Heuristic function for A* (Manhattan distance)
 def heuristic(node, goal):
     return abs(node[0] - goal[0]) + abs(node[1] - goal[1])
 
+
 # Distance function (for grid-based pathfinding)
 def distance(current, neighbor):
     return 1
+
 
 # Get valid neighbors for the robot's configuration (up, down, left, right)
 def neighbors(current, grid):
     x, y = current
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # Left, Right, Down, Up
     valid_neighbors = []
-    
+
     for dx, dy in directions:
         nx, ny = x + dx, y + dy
-        if 0 <= nx < len(grid[0]) and 0 <= ny < len(grid) and grid[ny][nx] != 0:  # Assuming 0 is blocked
+        if len(grid[0]) > nx >= 0 != grid[ny][nx] and 0 <= ny < len(grid):  # Assuming 0 is blocked
             valid_neighbors.append((nx, ny))
 
     return valid_neighbors
+
 
 # RRT function to explore the configuration space and attempt to find the goal
 def RRT(start, goal, K, delta_q, grid):
     # Initialize the RRT with the starting point
     G = {start: None}
     for _ in range(K):
-        q_rand = (random.randint(0, len(grid[0])-1), random.randint(0, len(grid)-1))
+        q_rand = (random.randint(0, len(grid[0]) - 1), random.randint(0, len(grid) - 1))
         q_nearest = min(G.keys(), key=lambda q: abs(q[0] - q_rand[0]) + abs(q[1] - q_rand[1]))  # Find nearest vertex
-        
+
         # Move towards the random point, limiting to delta_q distance
         q_new = (min(q_nearest[0] + delta_q, q_rand[0]), min(q_nearest[1] + delta_q, q_rand[1]))
-        
+
         # Check if the new point is valid (not blocked)
         if grid[q_new[1]][q_new[0]] != 0:  # Ensure the new point is not blocked
             G[q_new] = q_nearest
@@ -87,6 +93,7 @@ def RRT(start, goal, K, delta_q, grid):
 
     print("RRT did not reach the goal. Pathfinding with A* is not possible.")
     return None
+
 
 # Example usage
 img = [

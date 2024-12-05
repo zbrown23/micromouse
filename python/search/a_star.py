@@ -72,7 +72,7 @@ def neighbors(current, grid):
     
     for dx, dy in directions:
         nx, ny = x + dx, y + dy
-        if 0 <= nx < len(grid[0]) and 0 <= ny < len(grid) and grid[ny][nx] != 0:  # Assuming 0 is a blocked cell
+        if len(grid[0]) > nx >= 0 != grid[ny][nx] and 0 <= ny < len(grid):  # Assuming 0 is a blocked cell
             valid_neighbors.append((nx, ny))
 
     return valid_neighbors
