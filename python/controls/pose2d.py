@@ -54,5 +54,5 @@ class Pose2d:
         y_pos = pose[1]
         quaternion = pose[3:]
         x, y, z, w = quaternion
-        yaw = np.atan2(2.0 * (w * z + x * y), 1.0 - 2.0 * (y * y + z * z))
+        yaw = np.arctan2(2.0 * (w * z + x * y), 1.0 - 2.0 * (y * y + z * z))
         return cls(x=x_pos, y=y_pos, theta=yaw)

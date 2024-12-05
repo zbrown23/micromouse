@@ -14,7 +14,7 @@ class OffCenterController:
     def update(self, robot_pos: Pose2d, target_pos: Pose2d):
         ref = np.array([target_pos.x, target_pos.y])
         error = ref - self.compute_off_center_pt(robot_pos)
-        u = self.kp * self.compute_j_inv(robot_pos.theta) * error
+        u = self.kp * (self.compute_j_inv(robot_pos.theta) @ error)
         return u[0], u[1]
 
     def compute_j_inv(self, theta):
@@ -28,7 +28,7 @@ class OffCenterController:
 
     def compute_off_center_pt(self, pose: Pose2d):
         off_center_pt = np.array([
-            [pose.x + self.a * np.cos(pose.theta)],
-            [pose.y + self.a * np.sin(pose.theta)]
+            pose.x + self.ctrl_pt_dist * np.cos(pose.theta),
+            pose.y + self.ctrl_pt_dist * np.sin(pose.theta)
         ])
         return off_center_pt

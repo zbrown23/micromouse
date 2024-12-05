@@ -3,6 +3,7 @@ import numpy as np
 import coppeliasim_zmqremoteapi_client as zmq
 from controls import Pose2d
 from pose_estimator import *
+from python.off_center_controller import OffCenterController
 
 
 class Robot:
@@ -33,18 +34,15 @@ def main():
     sim = client.getObject('sim')
     robot = Robot(sim)
     initial_position = sim.getObjectPosition(sim.getObject('/micromouse/center_pt'))
-    odometry = Odometry(Pose2d(initial_position[0], initial_position[1], 0))
-    robot.drive(0.5, 0)
+    l_wheel_joint = sim.getObject('/micromouse/l_wheel_joint')
+    r_wheel_joint = sim.getObject('/micromouse/r_wheel_joint')
+    controller = OffCenterController(sim, 0.085, 0.032, 0.05, 0.01)
     start_time = sim.getSimulationTime()
     last_time = start_time
     while last_time - start_time < 3:
-        now_time = sim.getSimulationTime()
-        dt = now_time - last_time
-        speeds = robot.get_wheel_speeds()
-        odom = odometry.update(speeds[0], speeds[1], dt)
-        print(f"{odom}, true position {Pose2d.from_sim(sim.getObjectPose(sim.getObject('/micromouse/center_pt')))}")
-        last_time = now_time
-    robot.drive(0, 0)
+        u = controller.update(Pose2d.from_sim(sim.getObjectPose(sim.getObject('/micromouse/center_pt'))), Pose2d.from_sim(sim.getObjectPose(sim.getObject('/Dummy'))))
+        sim.setJointTargetVelocity(l_wheel_joint, u[0])
+        sim.setJointTargetVelocity(r_wheel_joint, u[1])
 
 
 if __name__ == '__main__':
