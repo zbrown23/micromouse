@@ -5,7 +5,7 @@ Ari Avalos - Pathfinding algorithm development and optimal route searching
 
 Sophie Ave'Lallemant - Maze design, odometry and perception system
 
-Zach Brown - Robot control and movement execution
+Zach Brown - Robot control, pose estimation, robot design
 
 Adam Thompson - Maze mapping and exploration
 
@@ -26,9 +26,8 @@ The robot used for the simulation follows the differential drive design, which i
 
 
 ## Robot Control & Odometry
-We use an off-center point controller for robot motion. The robot follows a dummy point to explore the maze.
+We use an off-center point controller for robot motion. We originally experimented with using a linear time-variant unicycle controller, but found that it was unstable for some desired poses. The code for the LTV controller is still present. In order to explore the maze, the mapping algorithm provides this controller with a new point to go to, which the controller then drives towards. Due to the nature of the hardware involved in the Micromouse competition, we do not have a global knowledge of the pose of the robot, and so we rely on odometry and a gyroscope to figure out our pose. These two measurements are fused with an alpha-beta filter.
 
-We used odometry so that the robot can determine its position in the maze for mapping and path planning. We implemented an Alpha-Beta filter to correct for error.
 ## Maze Mapping
 As the robot navigates through the maze, it detects and stores information about the maze's structure. Using its sensors, it identifies walls and open paths, gradually building a map of the environment. The robot explores each cell, marking them as visited, and constructs a complete representation of the maze layout.
 
