@@ -5,7 +5,10 @@ Created on Tue Dec  3 13:15:01 2024
 @author: Ari
 """
 from collections import deque
+from coppeliasim_zmqremoteapi_client import RemoteAPIClient
 
+client = RemoteAPIClient() 
+sim = client.require('sim')
 
 def floodFill(img, x, y, newClr, goal=None):
     # Get the color of the starting pixel (prevClr)
@@ -78,12 +81,12 @@ img = [
     [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1]  # y=0 (origin)
 ]
 
-goal_pixel = (15, 6)  # Define the goal pixel in (x, y) format
-start_pixel = (0, 6)  # Define the starting pixel in (x, y) format
+goal_pixel = (15, 15)  # Define the goal pixel in (x, y) format
+start_pixel = (1, 1)  # Define the starting pixel in (x, y) format
 
-floodFill(img, start_pixel[0], start_pixel[1], 3, goal_pixel)  # Start the flood fill from (0, 6)
+path = floodFill(img, start_pixel[0], start_pixel[1], 3, goal_pixel)  # Start the flood fill from (0, 6)
 
-# Print the resulting image after flood fill
-print("\nFinal image after flood fill:")
-for row in img:
-    print(row)
+def sysCall_sensing():
+    message = {'id': 'pathPlan','data': path}
+    sim.broadcastMsg(message)
+    
