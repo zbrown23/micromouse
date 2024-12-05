@@ -26,7 +26,9 @@ The robot used for the simulation follows the differential drive design, which i
 Odometry is utilized to estimate the robot’s position within the maze, enabling it to track its movements and make accurate decisions about where to go next.
 
 ## Robot Control & Odometry
+We use an off-center point controller for robot motion. The robot follows a dummy point to explore the maze.
 
+We used odometry so that the robot can determine its position in the maze for mapping and path planning. We implemented an Alpha-Beta filter to correct for error.
 ## Maze Mapping
 As the robot navigates through the maze, it detects and stores information about the maze's structure. Using its sensors, it identifies walls and open paths, gradually building a map of the environment. The robot explores each cell, marking them as visited, and constructs a complete representation of the maze layout.
 
