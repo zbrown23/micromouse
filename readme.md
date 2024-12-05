@@ -17,6 +17,7 @@ Our project aims to develop a Micromouse robot simulation in CoppeliaSim, with t
 
 ## Maze
 We designed our maze according to the current competition rules, featuring a 16x16 grid. The starting point is located in the bottom-left corner, and the robot’s goal is to reach the center 2x2 grid. 
+![image](https://github.com/user-attachments/assets/cfde2533-9c36-4ca0-8f5c-8aaf8c60aee9)
 
 ## Robot
 The robot used for the simulation follows the differential drive design, which is commonly used in competition for its simplicity and effective movement. It is equipped with proximity sensors on the front, left, and right to detect walls, helping it avoid obstacles and stay within the maze pathways. Odometry is utilized to estimate the robot’s position within the maze, enabling it to track its movements and make accurate decisions about where to go next.
