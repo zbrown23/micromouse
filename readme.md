@@ -31,8 +31,7 @@ Odometry is utilized to estimate the robot’s position within the maze, enablin
 As the robot navigates through the maze, it detects and stores information about the maze's structure. Using its sensors, it identifies walls and open paths, gradually building a map of the environment. The robot explores each cell, marking them as visited, and constructs a complete representation of the maze layout.
 
 ## Path Calculation
-Using the mapping data, the robot calculates the most efficient route to the center. We use a flood fill algorithm and A* to calculate the optimal path to the goal.
-
+Using the mapping data, the robot calculates the most efficient route to the center. We use a breath first flood fill algorithm, a A* algorithm, and a Rapidly-exploring Random Tree(RRT) search algorithm that is then refined using A* to find the most optimal path for our robot. When one of the algorithms finish their search they then pass a list of postions for the robot to follow.
 
 ## Results
 lorem ipsum
