@@ -7,7 +7,10 @@ RRT for exploring, A_star for path planing
 
 import heapq
 import random
+from coppeliasim_zmqremoteapi_client import RemoteAPIClient
 
+client = RemoteAPIClient() 
+sim = client.require('sim')
 
 # Reconstructs the path from the 'cameFrom' map
 def reconstruct_path(cameFrom, current):
@@ -110,15 +113,13 @@ img = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ]
 
-start_pixel = (1, 9)
-goal_pixel = (17, 5)
+start_pixel = (1, 31)
+goal_pixel = (15, 15)
 
 # Run RRT to explore space and try to find the goal
 path = RRT(start_pixel, goal_pixel, 10000, 2, img)
 
-# Output the path
-if path:
-    print("Path found:")
-    print(path)
-else:
-    print("No path found.")
+def sysCall_sensing():
+    message = {'id': 'pathPlan','data': path}
+    sim.broadcastMsg(message)
+    
