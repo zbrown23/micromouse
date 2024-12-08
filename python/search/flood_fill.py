@@ -1,64 +1,73 @@
-# -*- coding: utf-8 -*-
-"""
-(BFS)Flood Fill search Algorithm 
-Created on Tue Dec  3 13:15:01 2024
-@author: Ari
-"""
 from collections import deque
-from coppeliasim_zmqremoteapi_client import RemoteAPIClient
+import coppeliasim_zmqremoteapi_client as zmq 
 
-client = RemoteAPIClient() 
-sim = client.require('sim')
-
-def floodFill(img, x, y, newClr, goal=None):
+def floodFill():
+    
+    # Get the Master map from copeliasim and assign it as img
+    client = zmq.RemoteAPIClient() 
+    sim = client.getObject('sim')
+    script = sim.getObject('/Sript')
+    img =  sim.callScriptFunction('getMap', script)
+    #setting the starting cell
+    x = 0
+    y = 0
+    # setting the pathing pixel
+    newClr = 3
     # Get the color of the starting pixel (prevClr)
     prevClr = img[y][x]  # Note: 'y' is row, 'x' is column (matches the new coordinate system)
-
+    
     # If the new color is the same as the previous color, no filling is needed
     if prevClr == newClr:
         return
-
+    
     # Initialize a queue for BFS (Breadth First Search)
     queue = deque([(x, y)])
-
+    
     # Dictionary to store parent references for path reconstruction
     parent = {(x, y): None}
-
+    
     # Start filling the region
     img[y][x] = newClr  # Change the starting pixel to the new color
-
+    
     # Define directions for moving (up, right, down, left)
-    directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]  # (dx, dy) pairs
-
+    directions = [(1, 0), (0, -1), (-1, 0), (0, 1)]  # (dx, dy) pairs
+    
+    # Calculate the goal position (center of the image)
+    goal_x = len(img[0]) // 2  # Center column
+    goal_y = len(img) // 2      # Center row
+    goal_pixel = (goal_x, goal_y)  # Define the goal pixel in (x, y) format
+    
     while queue:
         current_x, current_y = queue.popleft()  # Get the current pixel
-
+        
         # Check if we have reached the goal pixel
-        if goal and (current_x, current_y) == goal:
-            print(f"Goal has been reached ({current_x},{current_y})")
-
+        if (current_x, current_y) == goal_pixel:
             # Mark the goal with a distinct color
             img[current_y][current_x] = 5
-
-            # Reconstruct the path from start to goal by following parent links
+            
+            # Reconstruct the path from goal to start by following parent links
             path = []
             cell = (current_x, current_y)
             while cell is not None:
                 path.append(cell)
                 cell = parent[cell]
-
+            
             # Reverse the path to go from start to goal
             path.reverse()
+            
+            # Mark the path from goal to start with color 4, but only include odd positions
+            final_path = []
+            for px, py in path:
+                if px % 2 != 0 and py % 2 != 0:  # Only process odd positions
+                    if img[py][px] != 5:  # Avoid overwriting the goal marker (5)
+                        img[py][px] = 4
+                        # Apply transformation to odd positions
+                        new_x = (px + 1) // 2
+                        new_y = (py + 1) // 2
+                        final_path.append((new_x, new_y))
 
-            # Adjust the path for Cartesian coordinates (bottom-left origin)
-            path_cartesian = [(px, len(img) - py - 1) for px, py in path]
-
-            # Filter path to include only coordinates where both x and y are odd
-            path_cartesian_odd = [(px, py) for px, py in path_cartesian if px % 2 != 0 and py % 2 != 0]
-
-            print("Path from start to goal (only odd coordinates):", path_cartesian_odd)
-            break  # Stop flood fill if the goal is reached
-
+            return final_path
+        
         # Explore all 4 neighboring pixels (up, right, down, left)
         for dx, dy in directions:
             nx, ny = current_x + dx, current_y + dy
@@ -68,25 +77,3 @@ def floodFill(img, x, y, newClr, goal=None):
                 queue.append((nx, ny))  # Add the new pixel to the queue for further exploration
                 parent[(nx, ny)] = (current_x, current_y)  # Set the parent to current pixel
 
-
-# Example usage
-img = [
-    #0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
-    [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0],  # y=6
-    [1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0],  # y=5
-    [1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0],  # y=4
-    [1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1],  # y=3
-    [1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1],  # y=2
-    [0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],  # y=1
-    [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1]  # y=0 (origin)
-]
-
-goal_pixel = (15, 15)  # Define the goal pixel in (x, y) format
-start_pixel = (1, 31)  # Define the starting pixel in (x, y) format
-
-path = floodFill(img, start_pixel[0], start_pixel[1], 3, goal_pixel)  # Start the flood fill from (0, 6)
-
-def sysCall_sensing():
-    message = {'id': 'pathPlan','data': path}
-    sim.broadcastMsg(message)
-    
