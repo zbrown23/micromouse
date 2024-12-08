@@ -1,5 +1,6 @@
 from collections import deque
 import coppeliasim_zmqremoteapi_client as zmq 
+import numpy as np
 
 def floodFill():
     
@@ -7,8 +8,8 @@ def floodFill():
     client = zmq.RemoteAPIClient() 
     sim = client.getObject('sim')
     script = sim.getObjectHandle('/Sript')
-    img =  sim.callScriptFunction('getMap', script)
-     if MasterMap is None:
+    MasterMap = sim.callScriptFunction('getMap', script)
+    if MasterMap is None:
         print("No map available, returned None.")
     # Further processing on img (assuming it's a valid object)
         if MasterMap:
