@@ -3,7 +3,7 @@ import numpy as np
 import coppeliasim_zmqremoteapi_client as zmq
 from controls import Pose2d
 from pose_estimator import *
-from python.off_center_controller import OffCenterController
+from off_center_controller import OffCenterController
 
 
 class Robot:
@@ -33,11 +33,15 @@ def main():
     initial_position = sim.getObjectPosition(sim.getObject('/micromouse/center_pt'))
     l_wheel_joint = sim.getObject('/micromouse/l_wheel_joint')
     r_wheel_joint = sim.getObject('/micromouse/r_wheel_joint')
-    controller = OffCenterController(sim, 0.1, 0.032, 0.05, 0.0075)
+    controller = OffCenterController(sim, 1, 0.032, 0.05, 0.01)
     start_time = sim.getSimulationTime()
     last_time = start_time
     while last_time - start_time < 3:
         u = controller.update(Pose2d.from_sim(sim.getObjectPose(sim.getObject('/micromouse/center_pt'))), Pose2d.from_sim(sim.getObjectPose(sim.getObject('/Dummy'))))
+        
+        if u[0] < -0.5 and u[1] > 0.5:
+            u = [-6, -6]
+        
         sim.setJointTargetVelocity(l_wheel_joint, u[0])
         sim.setJointTargetVelocity(r_wheel_joint, u[1])
 

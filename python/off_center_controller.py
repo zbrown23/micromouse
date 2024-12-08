@@ -3,7 +3,7 @@ from controls import Pose2d
 
 
 class OffCenterController:
-    def __init__(self, sim, kp=0.5, wheel_dia=0.032, track_width=0.05, ctrl_pt_dist=0.01):
+    def __init__(self, sim, kp=0.1, wheel_dia=0.032, track_width=0.05, ctrl_pt_dist=0.01):
         self.sim = sim
         self.kp = kp
         self.wheel_rad = wheel_dia / 2
@@ -28,7 +28,8 @@ class OffCenterController:
 
     def compute_off_center_pt(self, pose: Pose2d):
         off_center_pt = np.array([
-            pose.x + self.ctrl_pt_dist * np.cos(pose.theta),
-            pose.y + self.ctrl_pt_dist * np.sin(pose.theta)
+            pose.x + self.ctrl_pt_dist * np.sin(pose.theta),
+            pose.y + self.ctrl_pt_dist * np.cos(pose.theta)
         ])
+        #print(off_center_pt)
         return off_center_pt
