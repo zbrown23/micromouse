@@ -6,8 +6,14 @@ def floodFill():
     # Get the Master map from copeliasim and assign it as img
     client = zmq.RemoteAPIClient() 
     sim = client.getObject('sim')
-    script = sim.getObject('/Sript')
+    script = sim.getObjectHandle('/Sript')
     img =  sim.callScriptFunction('getMap', script)
+     if MasterMap is None:
+        print("No map available, returned None.")
+    # Further processing on img (assuming it's a valid object)
+        if MasterMap:
+            img = []
+            img = np.array(img)
     #setting the starting cell
     x = 0
     y = 0
