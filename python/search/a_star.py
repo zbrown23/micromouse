@@ -1,14 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Dec  3 14:08:54 2024
-
-@author: Fulge
-"""
 import heapq
-
-from coppeliasim_zmqremoteapi_client import RemoteAPIClient
-client = RemoteAPIClient() 
-sim = client.require('sim')
+import coppeliasim_zmqremoteapi_client as zmq 
+import numpy as np
 
 # Reconstructs the path from the 'cameFrom' map
 def reconstruct_path(cameFrom, current):
@@ -19,7 +11,28 @@ def reconstruct_path(cameFrom, current):
     return total_path
 
 # A* algorithm
-def A_star(start, goal, h, d, grid):
+def A_star(h, d):
+    #heuristic, distance
+    h = 0
+    d = 0
+    #Get the Master map from copeliasim and assign it as img
+    client = zmq.RemoteAPIClient() 
+    sim = client.getObject('sim')
+    script = sim.getObjectHandle('/Script')
+    MasterMap =  sim.callScriptFunction('getMap', script)
+    if MasterMap is None:
+        print("No map available, returned None.")
+     #Further processing on img (assuming it's a valid object)
+        if MasterMap:
+            grid = []
+            grid = np.array(img)
+    # Hardcoded start at (1, 1)
+    start = (1, 1)
+
+    # Calculate the goal as the center of the grid
+    height, width = len(grid), len(grid[0])
+    goal = (width // 2, height // 2)  # Goal is at the center of the grid
+
     # The set of discovered nodes that may need to be (re-)expanded
     openSet = []
     heapq.heappush(openSet, (0, start))  # (fScore, node)
@@ -40,12 +53,15 @@ def A_star(start, goal, h, d, grid):
         # If the current node is the goal, reconstruct and return the path
         if current == goal:
             path = reconstruct_path(cameFrom, current)
-            # Convert the path to Cartesian coordinates (origin at bottom-left)
-            path_cartesian = [(px, len(grid) - py - 1) for px, py in path]
+
+            # Only include coordinates where both x and y are odd
+            odd_path = [(px, py) for px, py in path if px % 2 != 0 and py % 2 != 0]
             
-            # Only include coordinates where either x or y is odd
-            filtered_path = [(px, py) for px, py in path_cartesian if px % 2 != 0 and py % 2 != 0]
-            return filtered_path
+            # Adjust the odd positions by applying (x + 1) // 2 and (y + 1) // 2
+            adjusted_path = [( (px + 1) // 2, (py + 1) // 2 ) for px, py in odd_path]
+            
+            # Return the adjusted path
+            return adjusted_path
 
         # Explore neighbors
         for neighbor in neighbors(current, grid):
@@ -76,34 +92,7 @@ def neighbors(current, grid):
     
     for dx, dy in directions:
         nx, ny = x + dx, y + dy
-        if len(grid[0]) > nx >= 0 != grid[ny][nx] and 0 <= ny < len(grid):  # Assuming 0 is a blocked cell
+        if 0 <= nx < len(grid[0]) and 0 <= ny < len(grid) and grid[ny][nx] != 0:  # Assuming 0 is a blocked cell
             valid_neighbors.append((nx, ny))
 
     return valid_neighbors
-
-# Example usage
-img = [
-    #0, 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],#0
-    [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],#1
-    [0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0],#2
-    [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0],#3
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],#4
-    [0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0],#5
-    [0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0],#6
-    [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0],#7
-    [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],#8
-    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],#9
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] #10
-]
-
-start_pixel = (1, 31)  # Starting point (x, y) in (column, row)
-goal_pixel = (15, 15)  # Goal point (x, y) in (column, row)
-
-# Run A* to find the path
-path = A_star(start_pixel, goal_pixel, heuristic, distance, img)
-
-
-def sysCall_sensing():
-    message = {'id': 'pathPlan','data': path}
-    sim.broadcastMsg(message)
