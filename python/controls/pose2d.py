@@ -22,9 +22,9 @@ class Pose2d:
 
     def relativeTo(self, other: 'Pose2d') -> 'Pose2d':
         """
-                Returns the pose of the current object relative to the other pose.
-                This involves translating the coordinates and rotating them to the reference frame of the other pose.
-                """
+        Returns the pose of the current object relative to the other pose.
+        This involves translating the coordinates and rotating them to the reference frame of the other pose.
+        """
         # Translate coordinates
         dx = self.x - other.x
         dy = self.y - other.y
