@@ -36,7 +36,7 @@ class PIDController:
         Control output
         """
         if dt <= 0:
-            raise ValueError("dt must be greater than zero.")
+            dt = 0.00000001  # this is a really, really gross hack.
 
         # Proportional term
         p_term = self.kp * error

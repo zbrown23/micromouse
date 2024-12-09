@@ -31,5 +31,4 @@ class OffCenterController:
             pose.x + self.ctrl_pt_dist * np.sin(pose.theta),
             pose.y + self.ctrl_pt_dist * np.cos(pose.theta)
         ])
-        #print(off_center_pt)
         return off_center_pt
