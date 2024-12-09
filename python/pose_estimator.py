@@ -35,7 +35,7 @@ class Gyro:
         _, angular_vel = self.sim.getVelocity(self.robot)
         angular_vel = np.array(angular_vel)
         angular_vel = np.linalg.norm(angular_vel)
-        angular_vel += np.random.normal(0, 0.025)  # add noise similar to the noise in a MEMS gyro
+        angular_vel += np.random.normal(0, 0.00025)  # add noise similar to the noise in a MEMS gyro
         return angular_vel
 
 
@@ -105,8 +105,8 @@ class AlphaBetaFilter2D:
         self.pose.theta += self.alpha * (odom_pose.theta - self.pose.theta)
 
         # Update velocities
-        self.vx += self.beta * ((odom_pose.x - self.pose.x) / (dt + 0.00001))
-        self.vy += self.beta * ((odom_pose.y - self.pose.y) / (dt + 0.00001))
+        self.vx += self.beta * ((odom_pose.x - self.pose.x) / dt)
+        self.vy += self.beta * ((odom_pose.y - self.pose.y) / dt)
         self.omega = gyro_rate  # Use the current gyro rate
 
         # Normalize theta to [-pi, pi]

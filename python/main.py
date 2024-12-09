@@ -37,20 +37,20 @@ def main():
     r_wheel_joint = sim.getObject('/micromouse/r_wheel_joint')
     pose_estimator = PoseEstimator(sim, Pose2d.from_sim(sim.getObjectPose(mouse_center)), 0.85, 0.005)
     controller = OffCenterController(sim, 1, 0.032, 0.05, 0.01)
-    heading_controller = PIDController(5, 0, 0)
+    heading_controller = PIDController(5, 0, 0.01)
     while not solved:
         dt = sim.getSimulationTime() - sim_time
         sim_time = sim.getSimulationTime()
-        # robot_pose = pose_estimator.update(dt)  # not stable with the heading controller, so we have to cheat :(
-        robot_pose = Pose2d.from_sim(sim.getObjectPose(mouse_center))
-        target_pose = Pose2d.from_sim(sim.getObjectPose(dummy))
-        u = controller.update(robot_pose, target_pose)
-        heading_error = wrap_angle(target_pose.theta - robot_pose.theta - np.pi / 2)
-        omega_effort = heading_controller.update(heading_error, robot_pose.theta)
-        heading_u = robot.drive(0, omega_effort)
-        sim.setJointTargetVelocity(l_wheel_joint, u[0] + heading_u[0])
-        sim.setJointTargetVelocity(r_wheel_joint, u[1] + heading_u[1])
-        time.sleep(0.01)
+        if dt >= 0.001:
+            # robot_pose = pose_estimator.update(dt)  # not stable with the heading controller, so we have to cheat :(
+            robot_pose = Pose2d.from_sim(sim.getObjectPose(mouse_center))
+            target_pose = Pose2d.from_sim(sim.getObjectPose(dummy))
+            u = controller.update(robot_pose, target_pose)
+            heading_error = wrap_angle(target_pose.theta - robot_pose.theta - np.pi / 2)
+            omega_effort = heading_controller.update(heading_error, robot_pose.theta)
+            heading_u = robot.drive(0, omega_effort)
+            sim.setJointTargetVelocity(l_wheel_joint, u[0] + heading_u[0])
+            sim.setJointTargetVelocity(r_wheel_joint, u[1] + heading_u[1])
 
 
 if __name__ == '__main__':
