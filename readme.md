@@ -36,8 +36,9 @@ Using the mapping data, the robot calculates the most efficient route to the cen
 
 ## Results
 At this current moment we have not been able to test how long it takes for each path planning algorithm to complete the maze usin gour simulation. However, if our code was able to pull the master map matrix data from our simulation as we expect it we have theoretical times of completion for all three of the path planning algorithms. We aquired the theoretical times by recreating our master map in a python matrix and running it in our path planing algorithm.
-| Algorithm | A-Star| FloodFill | RRT with A-Star|
-| time :| 0.002000 seconds | 0.002001 seconds | 0.007002 seconds |
+| Algorithm | A-Star | FloodFill | RRT with A-Star|
+|-----------|--------|-----------|----------------|
+| time      |0.002000| 0.002001  | 0.007002       |
 
 
 ## Conclusion
