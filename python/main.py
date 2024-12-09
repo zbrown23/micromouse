@@ -35,7 +35,7 @@ def main():
     mouse_center = sim.getObject('/micromouse/center_pt')
     l_wheel_joint = sim.getObject('/micromouse/l_wheel_joint')
     r_wheel_joint = sim.getObject('/micromouse/r_wheel_joint')
-    controller = OffCenterController(sim, 1, 0.032, 0.05, 0.01)
+    controller = OffCenterController(sim, 1.4, 0.032, 0.05, 0.01)
     heading_controller = PIDController(1, 0, 0)
     while not solved:
         dt = sim.getSimulationTime() - sim_time
