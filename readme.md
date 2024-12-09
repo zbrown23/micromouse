@@ -34,14 +34,14 @@ As the robot navigates through the maze, it detects and stores information about
 The algorithm operates as follows. At each cell, the mapping algorithm will check to see all available movement options, and will take whichever option is available (in priority order left, front, right), and not in either the to-visit stack, or in the visited array. It will then push the cell it is located at to the top of the to-visit stack, and move to the next cell. When it reaches a cell in which there are no available movement options, it will store that cell in the visited array, pop the current cell from the to-visit stack, and the algorithm will run again this time going to the previous cell. Through this process, the robot will explore every cell in the mase at least once, and generate a complete grid of the maze's walls.
 
 ## Path Calculation
-Using the mapping data, the robot calculates the most efficient route to the center. We use a breath first flood fill algorithm, a A* algorithm, and a Rapidly-exploring Random Tree(RRT) search algorithm that is then refined using A* to find the most optimal path for our robot. When one of the algorithms finish their search they then pass a list of postions for the robot to follow.
+Using the mapping data, the robot calculates the most efficient route to the center. We use a breadth-first flood fill algorithm, an A* algorithm, and a Rapidly-exploring Random Tree (RRT) search algorithm that is then refined using A* to find the most optimal path for our robot. When one of the algorithms finishes their search, they then pass a list of positions for the robot to follow.
 
 ## Results
-At this current moment we have not been able to test how long it takes for each path planning algorithm to complete the maze usin gour simulation. However, if our code was able to pull the master map matrix data from our simulation as we expect it we have theoretical times of completion for all three of the path planning algorithms. We aquired the theoretical times by recreating our master map in a python matrix and running it in our path planing algorithm.
+At this current moment we have not been able to test how long it takes for each path planning algorithm to complete the maze using our simulation. However, if our code was able to pull the master map matrix data from our simulation as we expect it, we have theoretical times of completion for all three of the path planning algorithms. We acquired the theoretical times by recreating our master map in a Python matrix and running it in our path planning algorithm.
 | Algorithm | A-Star | FloodFill | RRT with A-Star|
 |-----------|--------|-----------|----------------|
-| time      |0.002000| 0.002001  | 0.007002       |
+| time      |0.002000| 0.002001  | 0.007002       |
 
 
 ## Conclusion
-lorem ipsum
+In our project we attempted to simulate a Micromouse in CoppeliaSim. With our own custom-designed robot and maze, we currently are capable of having our micro mouse explore the entirety of our map. We were not able to establish communication from Lua, and our pathing algorithm, unfortunately, We do have estimated run times based on our map.
