@@ -36,21 +36,27 @@ class PIDController:
         Control output
         """
         if dt <= 0:
-            dt = 0.00000001  # this is a really, really gross hack.
+            dt = None  # this is a really, really gross hack.
 
         # Proportional term
         p_term = self.kp * error
 
-        # Integral term with limits
-        self.integral += error * dt
-        if self.i_term_limits[0] is not None:
-            self.integral = max(self.i_term_limits[0], self.integral)
-        if self.i_term_limits[1] is not None:
-            self.integral = min(self.i_term_limits[1], self.integral)
-        i_term = self.ki * self.integral
+        try:
+            # Integral term with limits
+            self.integral += error * dt
+            if self.i_term_limits[0] is not None:
+                self.integral = max(self.i_term_limits[0], self.integral)
+            if self.i_term_limits[1] is not None:
+                self.integral = min(self.i_term_limits[1], self.integral)
+            i_term = self.ki * self.integral
+        except Exception:
+            i_term = 0
 
         # Derivative term
-        derivative = (error - self.last_error) / dt
+        try:
+            derivative = (error - self.last_error) / dt
+        except Exception:
+            derivative = 0
         d_term = self.kd * derivative
 
         # Combine terms
