@@ -35,7 +35,10 @@ As the robot navigates through the maze, it detects and stores information about
 Using the mapping data, the robot calculates the most efficient route to the center. We use a breath first flood fill algorithm, a A* algorithm, and a Rapidly-exploring Random Tree(RRT) search algorithm that is then refined using A* to find the most optimal path for our robot. When one of the algorithms finish their search they then pass a list of postions for the robot to follow.
 
 ## Results
-lorem ipsum
+At this current moment we have not been able to test how long it takes for each path planning algorithm to complete the maze usin gour simulation. However, if our code was able to pull the master map matrix data from our simulation as we expect it we have theoretical times of completion for all three of the path planning algorithms. We aquired the theoretical times by recreating our master map in a python matrix and running it in our path planing algorithm.
+| Algorithm | A-Star| FloodFill | RRT with A-Star|
+| time :| 0.002000 seconds | 0.002001 seconds | 0.007002 seconds |
+
 
 ## Conclusion
 lorem ipsum
